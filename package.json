@@ -1,0 +1,11 @@
+{
+  "name": "queue",
+  "version": "1.0.0",
+  "description": "service pour la gestion des files ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ameur anas",
+  "license": "ISC"
+}
