@@ -4,8 +4,15 @@
   "description": "service pour la gestion des files ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "node ./src/index.js"
   },
   "author": "Ameur anas",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "winston": "^3.1.0",
+    "winston-daily-rotate-file": "^3.6.0"
+  }
 }
