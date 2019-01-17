@@ -80,6 +80,94 @@ function createGroup(name_groups) {
   })
 }
 
+/**************************************/
+/*           get Counter by id        */
+/**************************************/
+
+function getCounter(id_couter) {
+  return new Promise((resolve, reject) => {
+    dbconnection.query('select * from queue.counters where ID_COUNTER = ? ', [id_couter], function (error, results, fields) {
+      if (error) {
+        reject(error)
+      };
+      resolve(results[0])
+    });
+  })
+}
+
+
+/**************************************/
+/*           get Counter list         */
+/**************************************/
+
+function getListCounter() {
+  return new Promise((resolve, reject) => {
+    dbconnection.query('select * from queue.counters', function (error, results, fields) {
+      if (error) {
+        reject(error)
+      };
+      resolve(results)
+    });
+  })
+}
+
+/**************************************/
+/*            Create Counter          */
+/**************************************/
+
+function createCounter(id_groups) {
+  return new Promise((resolve, reject) => {
+    var counter = null;
+    dbconnection.query('select max(counter) as max_counter from queue.counters where GROUP_ID = ?', [id_groups], function (error, results, fields) {
+      if (error) {
+        reject(error)
+      };
+      counter = ((results[0].max_counter) ? results[0].max_counter : 0) + 1 ;
+      dbconnection.query('insert into queue.counters (GROUP_ID,COUNTER) value (?,?) ', [id_groups, counter], function (error, results, fields) {
+        if (error) {
+          reject(error)
+        };
+        resolve(results.insertId)
+      });
+    });
+  })
+}
+
+
+/**************************************/
+/*          Get next Counter          */
+/**************************************/
+
+function getNextCounter(id_groups) {
+  return new Promise((resolve, reject) => {
+    var nextCounter = null;
+    dbconnection.query('select min(counter) as next_counter from queue.counters where GROUP_ID = ? and STATUS = "WAITING" ', [id_groups], function (error, results, fields) {
+      if (error) {
+        reject(error)
+      };
+      nextCounter = results[0].next_counter ;
+      resolve(nextCounter)
+    });
+  })
+}
+
+
+/**************************************/
+/*         terminate Counter          */
+/**************************************/
+
+function terminateCounter(id_groups,counter) {
+  return new Promise((resolve, reject) => {
+    dbconnection.query('UPDATE queue.counters SET STATUS = "TERMINATED" WHERE GROUP_ID = ? and COUNTER = ?', [id_groups,counter], function (error, results, fields) {
+      if (error) {
+        reject(error)
+      };
+      resolve()
+    });
+  })
+}
+
+
 
 /**********************************************/
 /* Closing database connection on Process SIG */
@@ -101,5 +189,10 @@ process
 module.exports = {
   getListGroups: getListGroups,
   getGroup: getGroup,
-  createGroup: createGroup
+  createGroup: createGroup,
+  createCounter: createCounter,
+  getCounter: getCounter,
+  getListCounter: getListCounter,
+  getNextCounter: getNextCounter,
+  terminateCounter: terminateCounter
 };

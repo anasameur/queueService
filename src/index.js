@@ -198,3 +198,203 @@ myRouter.route('/api/v1/groups').post(async (req, res) => {
         return;
     }
 });
+
+/* ************************* */
+/*        Creat Counter      */
+/* ************************* */
+
+myRouter.route('/api/v1/counter/:id_group').post(async (req, res) => {
+    try {
+        const id_group = parseInt(req.params.id_group);
+        try {
+            var counter_id = await mysql.createCounter(id_group);
+            try {
+                var counter = await mysql.getCounter(counter_id);
+                res.status(200);
+                res.setHeader('Content-Type', 'application/json');
+                res.send(
+                    JSON.stringify({
+                        counter: counter
+                    })
+                );
+                return;
+            } catch (error) {
+                res.status(500);
+                res.setHeader('Content-Type', 'application/json');
+                res.send(
+                    JSON.stringify({
+                        error: {
+                            id: 'Counter was created successfuly but result couldn\'t be sended',
+                            message: error.message,
+                        },
+                    })
+                );
+                return;
+            }
+
+        } catch (error) {
+            res.status(500);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(
+                JSON.stringify({
+                    error: {
+                        id: 'Unable to create counter',
+                        message: error.message,
+                    },
+                })
+            );
+            return;
+        }
+    } catch (error) {
+        res.status(400);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                error: {
+                    message: `Unable to get group id`,
+                },
+            })
+        );
+        return;
+    }
+});
+
+
+/* ************************* */
+/*          get Counter      */
+/* ************************* */
+
+myRouter.route('/api/v1/counter/:id_counter').get(async (req, res) => {
+    try {
+        const counter_id = parseInt(req.params.id_counter);
+        try {
+            var counter = await mysql.getCounter(counter_id);
+            res.status(200);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(
+                JSON.stringify({
+                    counter: counter
+                })
+            );
+            return;
+        } catch (error) {
+            res.status(500);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(
+                JSON.stringify({
+                    error: {
+                        id: 'Unable to get counter',
+                        message: error.message,
+                    },
+                })
+            );
+            return;
+        }
+    } catch (error) {
+        res.status(400);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                error: {
+                    message: `Unable to get counter id`,
+                },
+            })
+        );
+        return;
+    }
+});
+
+
+/* ************************* */
+/*      get Counters list    */
+/* ************************* */
+
+myRouter.route('/api/v1/counter').get(async (req, res) => {
+    try {
+        var counters = await mysql.getListCounter();
+        res.status(200);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                counters: counters
+            })
+        );
+        return;
+    } catch (error) {
+        res.status(500);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                error: {
+                    id: 'Unable to get counters list',
+                    message: error.message,
+                },
+            })
+        );
+        return;
+    }
+});
+
+
+/* ************************* */
+/*      get next counter     */
+/* ************************* */
+
+myRouter.route('/api/v1/nextcounter/:id_group').get(async (req, res) => {
+    try {
+        const id_group = parseInt(req.params.id_group);
+        var counters = await mysql.getNextCounter(id_group);
+        res.status(200);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                counters: counters
+            })
+        );
+        return;
+    } catch (error) {
+        res.status(500);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                error: {
+                    id: 'Unable to get next counter',
+                    message: error.message,
+                },
+            })
+        );
+        return;
+    }
+});
+
+/* ************************* */
+/*     terminate counter     */
+/* ************************* */
+
+myRouter.route('/api/v1/terminate/:id_group').post(async (req, res) => {
+    try {
+        const id_group = parseInt(req.params.id_group);
+        const counter = req.body.counter;
+
+        var counters = await mysql.terminateCounter(id_group,counter);
+        res.status(200);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                message: `The counter ${counter} in group ${id_group} was terminated successfully`
+            })
+        );
+        return;
+    } catch (error) {
+        res.status(500);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(
+            JSON.stringify({
+                error: {
+                    message: error.message ,
+                },
+            })
+        );
+        return;
+    }
+});
