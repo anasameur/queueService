@@ -5,5 +5,11 @@
     "sslport": 8453,
     "framework": "express",
     "environment": "NodeJs"
+  },
+
+  "mysql":{
+    "host": "localhost",
+    "user": "root",
+    "password": "Qnqsq;eur@261993@"
   }
 }

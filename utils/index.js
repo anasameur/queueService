@@ -9,7 +9,7 @@ var transport = new transports.DailyRotateFile({
   filename: 'log/application-%DATE%.log',
   datePattern: 'YYYY-MM-DD-HH',
   zippedArchive: true,
-  maxSize: '10k',
+  maxSize: '1M',
   maxFiles: '14d',
 });
 
